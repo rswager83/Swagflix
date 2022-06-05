@@ -4,185 +4,28 @@ const express = require('express'),
     bodyParser = require('body-parser'),
     uuid = require('uuid');
 
+    // Next four lines used to integrate mongoose into Rest API to perform CRUD on MongoDB data
+const mongoose = require('mongoose'),
+    Models = require('./models.js');
+
+const Movies = Models.Movie;
+const Users = Models.User;
+    //    
+
+    // Allows Mongoose to connect to db to perform CRUD on docs w/n API
+mongoose.connect('mongodb://localhost:27017/swagFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
+
 const app = express();
 
+    // Middleware
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-  // Log data
+    // Log data to terminal
 app.use(morgan('common'));
 
-  // Sends static files to log.txt
+    // Sends static files
 app.use(express.static('public'));
-
-let users = [
-        {
-            id: 1,
-            name: 'John McClain',
-            favoriteMovies: ['Die Hard']
-        },
-        {
-            id: 2,
-            name: 'Dutch',
-            favoriteMovies: ['Predator']
-        },
-        {
-            id: 3,
-            name: 'Martin Riggs',
-            favoriteMovies: ['Lethal Weapon']
-        },
-        {
-            id: 4,
-            name: 'Roger Murtaw',
-            favoriteMovies: ['Lethal Weapon']
-        }
-]
-
-
-let movies = [
-        {
-            title: 'Predator',
-            description: 'The hunt is on!',
-            director: {
-                name: 'John McTiernan',
-                bio: 'Directed by favorite childhood movie'
-            },
-            genre: {
-                name: 'Action',
-                description: 'Guns a blazin'
-            },
-            img: ''
-        },
-        {
-            title: 'Commando',
-            description: "Don't ever kidnap a man's daughter!",
-            director: {
-                name: 'Mark L. Lester',
-                bio: 'Directed my second favorite childhood movie!'
-            },
-            genre: {
-                name: 'Action',
-                description: 'Guns a blazin'
-            },
-            img: ''
-        },
-        {
-            title: 'Lethal Weapon',
-            description: 'These guys cannot be stopped!',
-            director: {
-                name: 'Richard Donner',
-                bio: 'He directed lethal weapon.'
-            },
-            genre: {
-                name: 'Action',
-                description: 'Guns a blazin'
-            },
-            img: ''
-        },
-        {
-            title: 'Die Hard',
-            description: "He just doesn't die!",
-            director: {
-                name: 'John McTiernan',
-                bio: 'He directed Die Hard.'
-            },
-            genre: {
-                name: 'Action',
-                description: 'Guns a blazin'
-            },
-            img: ''
-        },
-        {
-            title: 'Ghostbusters',
-            description: 'Who you gonna call?',
-            director: {
-                name: 'Ivan Reitman',
-                bio: 'He directed ghostbusters.'
-            },
-            genre: {
-                name: 'Comedy',
-                description: 'Its funny!'
-            },
-            img: ''
-        },
-        {
-            title: 'The Burbs',
-            description: 'You cannot trust your neighbors!',
-            director: {
-                name: 'Joe Dante',
-                bio: 'He directed Tom Hanks before he was Tom Hanks.'
-            },
-            genre: {
-                name: 'Comedy',
-                description: 'Its funny!'
-            },
-            img: ''
-        },
-        {
-            title: 'Big',
-            description: 'Careful what you wish for!',
-            director: {
-                name: 'Penny Marshall',
-                bio: 'He directed Big.'
-            },
-            genre: {
-                name: 'Comedy',
-                description: 'Its funny!'
-            },
-            img: ''
-        },
-        {
-            title: 'Flight of the Navigator',
-            description: 'It would be sooo awesome to take over a ufo!',
-            director: {
-                name: 'Randal Kleiser',
-                bio: 'He directed this movie.'
-            },
-            genre: {
-                name: 'Suspense',
-                description: 'You are afraid to look away!'
-            },
-            img: ''
-        },
-        {
-            title: 'Alien',
-            description: 'For the love of god! Do not look into a giant egg! Nothing nice comes out!',
-            director: {
-                name: 'Ridley Scott',
-                bio: 'He directed a scary movie!'
-            },
-            genre: {
-                name: 'Horror',
-                description: 'Good luck keeping your eyes open.'
-            },
-            img: ''
-        },
-        {
-            title: 'Aliens',
-            description: 'Lets light the fires and kick the tires! Here comes Ripley again, to show who is the boss!',
-            director: {
-                name: 'James Cameron',
-                bio: 'He directed an all time classic!'
-            },
-            genre: {
-                name: 'Horror',
-                description: 'Good luck keeping your eyes open.'
-            },
-            img: ''
-        },
-        {
-            title: 'The Abyss',
-            description: "I don't know about going that deep in the water! Something just might find you.",
-            director: {
-                name: 'James Cameron',
-                bio: 'He directed some good movies.'
-            },
-            genre: {
-                name: 'Suspense',
-                description: 'You are afraid to look away!'
-            },
-            img: ''
-        },
-];
 
     // READ 
 app.get('/', (req, res) => {
@@ -193,118 +36,191 @@ app.get('/documenatation.html', (req, res) => {
     res.sendFile('public/documentation.html', { root: __dirname});
 });
 
-    // READ list of movies
+    // READ list of movies*
  app.get('/movies', (req, res) => {
-    res.status(200).json(movies);
+    Movies.find()
+        .then((movies) => {
+            res.status(201).json(movies);
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        });
 });
 
-    // READ movie by title
-app.get('/movies/:title', (req, res) => {
-    const { title } = req.params;
-    const movie = movies.find(movie => movie.title === title);
-
-    if (movie) {
-        res.status(200).json(movie);
-    } else {
-        res.status(400).send('no such movie')
-    }
+    // READ movie by title*
+app.get('/movies/:Title', (req, res) => {
+    Movies.findOne({ Title: req.params.Title })
+        .then((movie) => {
+            res.status(201).json(movie);
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        });
 });
 
-    // READ movie by name of genre 
-app.get('/movies/genre/:genreName', (req, res) => {
-    const { genreName } = req.params;
-    const genre = movies.find(movie => movie.genre.name === genreName).genre;
-
-    if (genre) {
-        res.status(200).json(genre);
-    } else {
-        res.status(400).send('no such genre')
-    }
+    // READ movies by name of genre 
+app.get('/movies/genre/:Name', (req, res) => {
+    Movies.find({ 'Genre.Name' : req.params.Name })
+        .then((movie) => {
+            res.status(201).json(movie);
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        });
 });
 
     // READ directors name
-app.get('/movies/directors/:directorName', (req, res) => {
-    const { directorName } = req.params;
-    const director = movies.find(movie => movie.director.name === directorName).director;
+app.get('/movies/directors/:name', (req, res) => {
+    Movies.findOne({ 'Director.Name': req.params.name }).then((movie) => {
+        if (movie) {
+        res.status(200).json(movie);
+        } else {
+        res.status(400).send('Director Not Found');
+        }
+    });
+});
+      
+    // Read all users*
+app.get('/users',(req, res) => {
+    Users.find()
+        .then((users) => {
+            res.status(201).json(users);
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        });
+});
 
-    if (director) {
-        res.status(200).json(director);
-    } else {
-        res.status(400).send('no such director')
-    }
+    // Read user by Username*
+app.get('/users/:Username', (req, res) => {
+    Users.findOne({ Username: req.params.Username })
+        .then((user) => {
+            res.json(user);
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        });
 });
 
  
-    // Create user and id
+    // Create user*
+    /* We'll expect JSON in this format
+    {
+        ID: Integer,
+        Username: String,
+        Password: String,
+        Email: String,
+        Birthday: Date
+    }*/
 app.post('/users', (req, res) => {
-    const newUser = req.body;
-
-    if (newUser.name) {
-        newUser.id = uuid.v4();
-        users.push(newUser);
-        res.status(201).json(newUser)
-    } else {
-        res.status(400).send('user need names')
-    }
+    Users.findOne({ Username: req.body.Username })
+        .then((user) => {
+            if(user) {
+                return res.status(400).send(req.body.Username + ' already exists');
+            } else {
+                Users
+                    .create({
+                        Username: req.body.Username,
+                        Password: req.body.Password,
+                        Email: req.body.Email,
+                        Birthday: req.body.Birthday
+                    })
+                    .then((user) => {res.status(201).json(user) })
+                .catch((error) => {
+                    console.error(error);
+                    res.status(500).send('Error: ' + error);
+                })
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+            res.status(500).send('Error: ' + error);
+        });
 });
 
-   // UPDATE user id
-app.put('/users/:id', (req, res) => {
-    const { id } = req.params;
-    const updatedUser = req.body;
-
-    let user = users.find( user => user.id == id );
-
-    if (user) {
-        user.name = updatedUser.name
-        res.status(200).json(user);
-    } else {
-        res.status(400).send('no such user');
-    }
+    // Update user's info by username*
+    /* Expect JSON in this format
+    {
+        Username: String, 
+        (required)
+        Password: String,
+        (required)
+        Email: String,
+        (required)
+        Birthday: Date,
+    }*/
+app.put('/users/:Username', (req, res) => {
+    Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
+        {
+            Username: req.body.Username,
+            Password: req.body.Password,
+            Email: req.body.Email,
+            Birthday: req.body.Birthday
+        }
+    },
+    { new: true }, // This line makes sure that the updated document is returned
+    (err, updatedUser) => {
+        if(err) {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        } else {
+            res.json(updatedUser);
+        }
+    });
 });
 
 
-    // CREATE add movie to fav
-app.post('/users/:id/:movieTitle', (req, res) => {
-    const { id, movieTitle } = req.params;
-
-    let user = users.find( user => user.id == id );
-
-    if (user) {
-        user.favoriteMovies.push(movieTitle);
-        res.status(200).send(`${movieTitle} has been added to user ${id}'s favorites`);
-    } else {
-        res.status(400).send('did not add to favorites');
-    }
+    // Add a movie to a user's list of favorites*
+app.post('/users/:Username/movies/:MovieID', (req, res) => {
+    Users.findOneAndUpdate({ Username: req.params.Username }, {
+        $push: { FavoriteMovies: req.params.MovieID }
+    },
+    { new: true }, 
+    (err, updatedUser) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        } else {
+            res.json(updatedUser);
+        }
+    });
 });
 
     // DELETE movie from fav
-app.delete('/users/:id/:movieTitle', (req, res) => {
-    const { id, movieTitle } = req.params;
-
-        // Checks to make sure user exists
-    let user = users.find( user => user.id == id );
-
-    if (user) {
-        user.favoriteMovies = user.favoriteMovies.filter( title => title !== movieTitle);
-        res.status(200).send(`${movieTitle} has been removed from users ${id}'s favorites`);
-    } else {
-        res.status(400).send('did not remove');
-    }
+app.delete('/users/:Username/movies/:MovieID', (req, res) => {
+    Users.findOneAndUpdate({ Username: req.params.Username }, {
+        $pull: { FavoriteMovies: req.params.MovieID }
+    },
+    { new: true }, 
+    (err, updatedUser) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        } else {
+            res.json(updatedUser);
+        }
+    });
 });
 
-    // DELETE user
-app.delete('/users/:id', (req, res) => {
-    const { id } = req.params;
-
-    let user = users.find( user => user.id == id );
-
-    if (user) {
-        users = users.filter( user => user.id != id);
-        res.status(200).send(`user ${id} has been deleted`);
-    } else {
-        res.status(400).send('user has not been deleted');
-    }
+    // Delete a user by username*
+app.delete('/users/:Username', (req, res) => {
+    Users.findOneAndRemove({ Username: req.params.Username })
+        .then((user) => {
+            if (!user) {
+                res.status(400).send(req.params.Username + ' was not found');
+            } else {
+                res.status(200).send(req.params.Username + ' was deleted.');
+            }
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        });
 });
 
     // Error handling
