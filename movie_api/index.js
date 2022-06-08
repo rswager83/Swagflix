@@ -79,7 +79,7 @@ app.get('/movies/genre/:Name', passport.authenticate('jwt', { session: false }),
 
     // READ directors name
 app.get('/movies/directors/:name', passport.authenticate('jwt', { session: false }), (req, res) => {
-    Movies.findOne({ 'Director.Name': req.params.name }).then((movie) => {
+    Movies.find({ 'Director.Name': req.params.name }).then((movie) => {
         if (movie) {
         res.status(200).json(movie);
         } else {
@@ -88,8 +88,8 @@ app.get('/movies/directors/:name', passport.authenticate('jwt', { session: false
     });
 });
       
-    // Read all users*
-app.get('/users', passport.authenticate('jwt', { session: false }),(req, res) => {
+    // Read all users
+app.get('/users', passport.authenticate('jwt', { session: false }), (req, res) => {
     Users.find()
         .then((users) => {
             res.status(201).json(users);
@@ -100,7 +100,7 @@ app.get('/users', passport.authenticate('jwt', { session: false }),(req, res) =>
         });
 });
 
-    // Read user by Username*
+    // Read user by Username
 app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
     Users.findOne({ Username: req.params.Username })
         .then((user) => {
@@ -113,7 +113,7 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (r
 });
 
  
-    // Create user*
+    // Create user
     /* We'll expect JSON in this format
     {
         ID: Integer,
@@ -148,7 +148,7 @@ app.post('/users', (req, res) => {
         });
 });
 
-    // Update user's info by username*
+    // Update user's info by username
     /* Expect JSON in this format
     {
         Username: String, 
@@ -180,7 +180,7 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }), (r
 });
 
 
-    // Add a movie to a user's list of favorites*
+    // Add a movie to a user's list of favorites
 app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { session: false }), (req, res) => {
     Users.findOneAndUpdate({ Username: req.params.Username }, {
         $push: { FavoriteMovies: req.params.MovieID }
@@ -212,7 +212,7 @@ app.delete('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { se
     });
 });
 
-    // Delete a user by username*
+    // Delete a user by username
 app.delete('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
     Users.findOneAndRemove({ Username: req.params.Username })
         .then((user) => {
