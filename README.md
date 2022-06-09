@@ -1,0 +1,28 @@
+# Swagflix
+## **About the Project**
+This project is based around the build of the server-side component of a movie web application. It will provide the users with access to the information of different movies, directors, and genres. The users will be able to sign up, update their personal information, and create a list of their favorite movies.<br /><br />
+### **Built with:**
+***The project was created by using the following:***
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+
+***The project uses the following authentication and authorization:***
+ - JWT
+ - Hashing
+ - Server-Side Validation
+<br /><br />
+### **Contributing**
+Contributions are an amazing way to learn, inspire, and create new code for everyone. Any contributions made are ***greatly appreicated***. <br /><br />
+If you have any suggestion at all that would make this remotely better, then please fork the repo and create a pull request. Simply open an issue with the tag **enhancement**. Thanks again and take care! 
+<space>
+1. Fork the Project
+2. Create your Feature Branch 
+3. Commit your Changes 
+4. Push to the Branch 
+5. Open a Pull Request <br /><br />
+### **Contact**
+Please feel free to contact me and offer any type of advice. As I begin my journey through web develeopment, I am always open to advice and helpful ways to accomplish whatever task given to me. Please feel free to reach out to me!
+- Ryan Swager - nanswaglen83@gmail.com
+- Project Link -https://github.com/rswager83/Swagflix.git
