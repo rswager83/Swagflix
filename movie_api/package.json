@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/rswager83/Swagflix.git"
+    "url": "git+https://github.com/rswager83/Swagflix.git"
   },
   "keywords": [],
   "author": "",
