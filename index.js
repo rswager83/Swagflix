@@ -13,15 +13,14 @@ const Users = Models.User;
     //    
 
     // Allows Mongoose to connect to db to perform CRUD on docs w/n API
-mongoose.connect('mongodb://localhost:27017/swagFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
+// mongoose.connect('mongodb://localhost:27017/swagFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const app = express();
 
     // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-  
 
     // CORS - Place before route middleware - Restrict access to API
 const cors = require('cors');
