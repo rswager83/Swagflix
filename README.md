@@ -6,6 +6,7 @@ This project is based around the build of the server-side component of a movie w
 - Node.js
 - Express.js
 - MongoDB
+- React
 
 ***The project uses the following authentication and authorization:***
  - JWT
