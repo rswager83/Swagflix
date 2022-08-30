@@ -237,8 +237,6 @@ app.get(
  * @method Post
  * @param {string} endpoint - "/users"
  * @param {string} Username - User's username
- * @param {string} First Name - User's first name
- * @param {string} Last Name - User's last name
  * @param {string} Password - User's password
  * @param {string} Email - User's email
  * @param {string} Birthday - User's birthday
@@ -310,8 +308,6 @@ app.post(
  * @requires passport
  * @param {string} endpoint - "/users/:Username"
  * @param {string} Username - User's username
- * @param {string} First Name - User's first name
- * @param {string} Last Name - User's last name
  * @param {string} Password - User's password
  * @param {string} Email - User's email
  * @param {string} Birthday - User's birthday
